@@ -1,5 +1,7 @@
 const express = require("express");
 
+const MongoClient = require("mongodb").MongoClient;
+
 const app = express();
 
 const bodyParser = require("body-parser");
@@ -74,13 +76,21 @@ function validateIssue(issue) {
 }
 
 app.get("/api/issues", (req, res) => {
-  const metadata = { total_count: issues.length };
-  app.set("json spaces", 2);
-
-  console.log("##=> Peticion... /api/issues");
-
-  res.json({ _metadata: metadata, records: issues });
-
+  db.collection("issues")
+    .find()
+    .toArray()
+    .then((issues) => {
+      const metadata = { total_count: issues.length };
+      res.json({ _metadata: metadata, records: issues });
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(500).json({ message: `Eror interno del servidor: ${error}` });
+    });
+  // const metadata = { total_count: issues.length };
+  // app.set("json spaces", 2);
+  // console.log("##=> Peticion... /api/issues");
+  // res.json({ _metadata: metadata, records: issues });
   //res.set("Content-Type", "application/json");
   //res.send(JSON.stringify({ _metadata: metadata, records: issues }, null, 2));
 });
@@ -106,4 +116,14 @@ app.post("/api/issues", (req, res) => {
   res.json(newIssue);
 });
 
-app.listen(3000, () => console.log("App iniciada en puerto 3000"));
+let db;
+MongoClient.connect("mongodb://localhost:27017/issuetracker", {
+  useUnifiedTopology: true
+})
+  .then((connection) => {
+    db = connection.db("issuetracker");
+    app.listen(3000, () => console.log("App iniciada en puerto 3000"));
+  })
+  .catch((error) => {
+    console.log("ERROR:", error);
+  });
