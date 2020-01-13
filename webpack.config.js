@@ -1,8 +1,33 @@
 module.exports = {
-  entry: "./src/App.jsx",
+  entry: {
+    app: ["./src/App.jsx"],
+    vendor: ["react", "react-dom", "whatwg-fetch"]
+  },
   output: {
     path: __dirname + "/static",
     filename: "app.bundle.js"
+  },
+  devServer: {
+    port: 8000,
+    contentBase: __dirname + "/static",
+    proxy: {
+      "/api/*": {
+        target: "http://localhost:3000"
+      }
+    }
+  },
+  plugins: [],
+  optimization: {
+    splitChunks: {
+      cacheGroups: {
+        vendor: {
+          name: "vendor",
+          chunks: "initial",
+          minChunks: 2,
+          filename: "vendor.bundle.js"
+        }
+      }
+    }
   },
   module: {
     rules: [
@@ -14,5 +39,7 @@ module.exports = {
         }
       }
     ]
-  }
+  },
+
+  devtool: "source-map"
 };

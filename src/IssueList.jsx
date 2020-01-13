@@ -1,3 +1,5 @@
+import React from "react";
+
 import IssueAdd from "./IssueAdd.jsx";
 import IssueFilter from "./IssueFilter.jsx";
 

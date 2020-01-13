@@ -10,6 +10,21 @@ const bodyParser = require("body-parser");
 app.use(express.static("static"));
 app.use(bodyParser.json());
 
+if (process.env.NODE_ENV !== "production") {
+  const webpack = require("webpack");
+  const webpackDevMiddleware = require("webpack-dev-middleware");
+  const webpackHotMiddleware = require("webpack-hot-middleware");
+  const config = require("../webpack.config");
+  config.entry.app.push(
+    "webpack-hot-middleware/client",
+    "webpack/hot/only-dev-server"
+  );
+  config.plugins.push(new webpack.HotModuleReplacementPlugin());
+  const bundler = webpack(config);
+  app.use(webpackDevMiddleware(bundler, { noInfo: true }));
+  app.use(webpackHotMiddleware(bundler, { log: console.log }));
+}
+
 app.get("/api/issues", (req, res) => {
   db.collection("issues")
     .find()
@@ -22,12 +37,6 @@ app.get("/api/issues", (req, res) => {
       console.log(error);
       res.status(500).json({ message: `Eror interno del servidor: ${error}` });
     });
-  // const metadata = { total_count: issues.length };
-  // app.set("json spaces", 2);
-  // console.log("##=> Peticion... /api/issues");
-  // res.json({ _metadata: metadata, records: issues });
-  //res.set("Content-Type", "application/json");
-  //res.send(JSON.stringify({ _metadata: metadata, records: issues }, null, 2));
 });
 
 app.post("/api/issues", (req, res) => {
