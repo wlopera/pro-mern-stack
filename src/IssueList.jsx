@@ -3,9 +3,16 @@ import React from "react";
 import IssueAdd from "./IssueAdd.jsx";
 import IssueFilter from "./IssueFilter.jsx";
 
+import { Link } from "react-router-dom";
+
 const IssueRow = (props) => (
   <tr>
-    <td>{props.issue._id}</td>
+    <td>
+      <Link to={`/issues/${props.issue._id}`}>
+        {props.issue._id.substr(-4)}
+      </Link>
+    </td>
+    <td>{props.issue.status}</td>
     <td>{props.issue.status}</td>
     <td>{props.issue.owner}</td>
     <td>{props.issue.created.toDateString()}</td>
@@ -23,6 +30,7 @@ function IssueTable(props) {
   const issueRows = props.issues.map((issue) => (
     <IssueRow key={issue._id} issue={issue} />
   ));
+
   return (
     <table className="bordered-table">
       <thead>

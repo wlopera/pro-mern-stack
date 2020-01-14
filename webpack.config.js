@@ -1,7 +1,7 @@
 module.exports = {
   entry: {
     app: ["./src/App.jsx"],
-    vendor: ["react", "react-dom", "whatwg-fetch"]
+    vendor: ["react", "react-dom", "whatwg-fetch", "react-router-dom"]
   },
   output: {
     path: __dirname + "/static",
@@ -10,6 +10,7 @@ module.exports = {
   devServer: {
     port: 8000,
     contentBase: __dirname + "/static",
+    historyApiFallback: true,
     proxy: {
       "/api/*": {
         target: "http://localhost:3000"
