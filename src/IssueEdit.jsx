@@ -13,10 +13,10 @@ export default class IssueEdit extends React.Component {
     return (
       <div>
         <p>
-          Este es un marcador de posición para un problema:
+          Este es un marcador de posición para un incidente:
           {this.props.match.params.name}.
         </p>
-        <Link to="/issues">Regresar a la lista de problemas</Link>
+        <Link to="/issues">Regresar a la lista de incidentes</Link>
       </div>
     );
   }

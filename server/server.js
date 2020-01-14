@@ -26,8 +26,13 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 app.get("/api/issues", (req, res) => {
+  const filter = {};
+  if (req.query.status) {
+    filter.status = req.query.status;
+  }
+  console.log("##=> filter: %O", filter);
   db.collection("issues")
-    .find()
+    .find(filter)
     .toArray()
     .then((issues) => {
       const metadata = { total_count: issues.length };

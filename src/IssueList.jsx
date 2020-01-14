@@ -5,6 +5,8 @@ import IssueFilter from "./IssueFilter.jsx";
 
 import { Link } from "react-router-dom";
 
+import PropTypes from "prop-types";
+
 const IssueRow = (props) => (
   <tr>
     <td>
@@ -12,7 +14,6 @@ const IssueRow = (props) => (
         {props.issue._id.substr(-4)}
       </Link>
     </td>
-    <td>{props.issue.status}</td>
     <td>{props.issue.status}</td>
     <td>{props.issue.owner}</td>
     <td>{props.issue.created.toDateString()}</td>
@@ -50,8 +51,8 @@ function IssueTable(props) {
 }
 
 export default class IssueList extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       issues: []
     };
@@ -63,8 +64,26 @@ export default class IssueList extends React.Component {
     this.loadData();
   }
 
+  componentDidUpdate(prepProps) {
+    const oldLocation = prepProps.location;
+    const newLocation = this.props.location;
+
+    console.log("##=> oldLocation: %O", oldLocation);
+    console.log("##=> newLocation: %O", newLocation);
+
+    if (newLocation.key === oldLocation.key) {
+      return;
+    }
+    if (newLocation.query !== undefined) {
+      newLocation.search = "?status=Open";
+    }
+
+    this.loadData();
+  }
+
   loadData() {
-    fetch("/api/issues")
+    console.log("carga: %O", `/api/issues${this.props.location.search}`);
+    fetch(`/api/issues${this.props.location.search}`)
       .then((response) => {
         if (response.ok) {
           response.json().then((data) => {
@@ -79,7 +98,7 @@ export default class IssueList extends React.Component {
           });
         } else {
           response.json().then((error) => {
-            alert("Erroa al consultas problemas: ", error.message);
+            alert("Error al consultas incidentes: ", error.message);
           });
         }
       })
@@ -109,7 +128,7 @@ export default class IssueList extends React.Component {
           response.json().then((error) => {
             console.log("error: %o", error);
             alert(
-              "Error al agregar nuevo problema [" +
+              "Error al agregar un nuevo incidente [" +
                 response.status +
                 "]: \n  " +
                 error.message
@@ -130,7 +149,7 @@ export default class IssueList extends React.Component {
   render() {
     return (
       <div>
-        <h1>Explorador de problemas</h1>
+        <h1>Explorador de incidentes</h1>
         <IssueFilter />
         <hr />
         <IssueTable issues={this.state.issues} />
@@ -140,3 +159,7 @@ export default class IssueList extends React.Component {
     );
   }
 }
+
+IssueList.propTypes = {
+  location: PropTypes.object.isRequired
+};
