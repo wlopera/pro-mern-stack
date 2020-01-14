@@ -1,174 +1,47 @@
+import React from "react";
+import ReactDOM from "react-dom";
+
+import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
+
+import IssueList from "./IssueList.jsx";
+import IssueEdit from "./IssueEdit.jsx";
+
 const contentNode = document.getElementById("contents");
 
-const IssueRow = (props) => (
-  <tr>
-    <td>{props.issue.id}</td>
-    <td>{props.issue.status}</td>
-    <td>{props.issue.owner}</td>
-    <td>{props.issue.created.toDateString()}</td>
-    <td>{props.issue.effort}</td>
-    <td>
-      {props.issue.completionDate
-        ? props.issue.completionDate.toDateString()
-        : ""}
-    </td>
-    <td>{props.issue.title}</td>
-  </tr>
-);
+const noMatch = () => {
+  return <p>Página no encontrada</p>;
+};
 
-function IssueTable(props) {
-  const issueRows = props.issues.map((issue) => (
-    <IssueRow key={issue.id} issue={issue} />
-  ));
+function App() {
   return (
-    <table className="bordered-table">
-      <thead>
-        <tr>
-          <th>Id</th>
-          <th>Estado</th>
-          <th>Propietario</th>
-          <th>Fecha de creación</th>
-          <th>Esfuero</th>
-          <th>Fecha de finalización</th>
-          <th>Título</th>
-        </tr>
-      </thead>
-      <tbody>{issueRows}</tbody>
-    </table>
+    <BrowserRouter>
+      <React.Fragment>
+        <Switch>
+          <Route exact path="/" component={IssueList} />
+          <Route exact path="/issues" component={IssueList} />
+          <Route path="/issues/:id" component={IssueEdit} />
+          <Route path="*" component={noMatch} />
+        </Switch>
+      </React.Fragment>
+    </BrowserRouter>
   );
 }
 
-// IssueRow.propTypes = {
-//   issue_id: React.PropTypes.number.isRequired,
-//   issue_title: React.PropTypes.string
-// };
+// const RouteApp = () => (
+//   <BrowserRouter>
+//     <React.Fragment>
+//       <Switch>
+//         <Route exact path="/" component={IssueList} />
+//         <Route path="/issues" component={IssueList} />
+//         <Route path="/edit" component={IssueEdit} />
+//         <Route path="*" component={noMatch} />
+//       </Switch>
+//     </React.Fragment>
+//   </BrowserRouter>
+// );
 
-// IssueRow.defaultProps = {
-//   issue_title: "-- Sin titulo --"
-// };
+ReactDOM.render(<App />, contentNode);
 
-class IssueFilter extends React.Component {
-  render() {
-    return <div>Marcador para el filtro de problemas (issue's)</div>;
-  }
+if (module.hot) {
+  module.hot.accept();
 }
-
-class IssueAdd extends React.Component {
-  constructor() {
-    super();
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
-
-  handleSubmit(e) {
-    e.preventDefault();
-    var form = document.forms.issueAdd;
-    this.props.createIssue({
-      status: "New",
-      created: new Date(),
-      owner: form.owner.value,
-      title: form.title.value
-    });
-    // Limpiar el formulario
-    form.owner.value = "";
-    form.title.value = "";
-  }
-
-  render() {
-    return (
-      <div>
-        <form name="issueAdd" onSubmit={this.handleSubmit}>
-          <input type="text" name="owner" placeholder="Propietario" />
-          <input type="text" name="title" placeholder="Título" />
-          <button>Add</button>
-        </form>
-      </div>
-    );
-  }
-}
-
-class IssueList extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      issues: []
-    };
-
-    this.createIssue = this.createIssue.bind(this);
-  }
-
-  componentDidMount() {
-    this.loadData();
-  }
-
-  loadData() {
-    fetch("/api/issues")
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("total de registros: ", data._metadata.total_count);
-        data.records.forEach((issue) => {
-          issue.created = new Date(issue.created);
-          if (issue.completionDate) {
-            issue.completionDate = new Date(issue.completionDate);
-          }
-        });
-        this.setState({ issues: data.records });
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  }
-
-  createIssue(newIssue) {
-    fetch("/api/issues", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newIssue)
-    })
-      .then((response) => {
-        if (response.ok) {
-          response.json().then((updateIssue) => {
-            console.log("1: %O", updateIssue);
-            updateIssue.created = new Date(updateIssue.created);
-            if (updateIssue.completionDate) {
-              updateIssue.completionDate = new Date(updateIssue.completionDate);
-            }
-            const newIssues = this.state.issues.concat(updateIssue);
-            this.setState({ issues: newIssues });
-          });
-        } else {
-          response.json().then((error) => {
-            console.log("error: %o", error);
-            alert(
-              "Error al agregar nuevo problema [" +
-                response.status +
-                "]: \n  " +
-                error.message
-            );
-          });
-        }
-      })
-      .catch((err) => {
-        alert(
-          "Error enviando data al servidor [" +
-            response.status +
-            "]:  \n  " +
-            error.message
-        );
-      });
-  }
-
-  render() {
-    return (
-      <div>
-        <h1>Explorador de problemas</h1>
-        <IssueFilter />
-        <hr />
-        <IssueTable issues={this.state.issues} />
-        <hr />
-        <IssueAdd createIssue={this.createIssue} />
-      </div>
-    );
-  }
-}
-
-ReactDOM.render(<IssueList />, contentNode);
