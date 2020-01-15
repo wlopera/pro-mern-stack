@@ -1,6 +1,9 @@
 const express = require("express");
 
 const MongoClient = require("mongodb").MongoClient;
+
+const { ObjectID } = require("mongodb");
+
 const Issue = require("./issue.js");
 
 const app = express();
@@ -25,6 +28,9 @@ if (process.env.NODE_ENV !== "production") {
   app.use(webpackHotMiddleware(bundler, { log: console.log }));
 }
 
+/**
+ * Consulta de incidentes
+ */
 app.get("/api/issues", (req, res) => {
   console.log("##=> req.query: %O", req.query);
   const filter = {};
@@ -55,6 +61,110 @@ app.get("/api/issues", (req, res) => {
     });
 });
 
+/**
+ * Consulta de un incidente por su ID
+ */
+app.get("/api/issues/:id", (req, res) => {
+  let issueId;
+  console.log("##=> Consulta req: %O", req.params.id);
+  try {
+    issueId = new ObjectID(req.params.id);
+  } catch (error) {
+    res.status(422).json({ message: `Invalido formato del ID: ${error}` });
+    return;
+  }
+  db.collection("issues")
+    .find({ _id: issueId })
+    .limit(1)
+    .next()
+    .then((issue) => {
+      if (!issue)
+        res
+          .status(404)
+          .json({ message: `No consigue incidente para el ID: ${issueId}` });
+      else res.json(issue);
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(500).json({ message: `Error interno del servidor: ${error}` });
+    });
+});
+
+/**
+ * Modificar un incidente
+ */
+app.put("/api/issues/:id", (req, res) => {
+  let issueId;
+  console.log("##=> Actualizacion req: %O", req.params.id);
+  try {
+    issueId = new ObjectID(req.params.id);
+  } catch (error) {
+    res.status(422).json({ message: `Invalido formato del ID: ${error}` });
+    return;
+  }
+  const issue = req.body;
+  delete issue._id;
+  const err = Issue.validateIssue(issue);
+  if (err) {
+    res.status(422).json({ message: `Petición invalida: ${err}` });
+    return;
+  }
+  if (
+    issue.status === "Fixed" ||
+    issue.status === "Verified" ||
+    issue.status === "Closed"
+  ) {
+    issue.completionDate = new Date();
+  } else {
+    issue.completionDate = "";
+  }
+  db.collection("issues")
+    .update({ _id: issueId }, issue)
+    .then(() =>
+      db
+        .collection("issues")
+        .find({ _id: issueId })
+        .limit(1)
+        .next()
+    )
+    .then((savedIssue) => {
+      res.json(savedIssue);
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(500).json({ message: `Error interno dle servidor: ${error}` });
+    });
+});
+
+/**
+ * Borrar un incidente
+ */
+app.delete("/api/issues/:id", (req, res) => {
+  let issueId;
+  console.log("##=> Borrando req: %O", req.params.id);
+  try {
+    issueId = new ObjectID(req.params.id);
+  } catch (error) {
+    res.status(422).json({ message: `Invalido formato dle ID: ${error}` });
+    return;
+  }
+  db.collection("issues")
+    .deleteOne({ _id: issueId })
+    .then((deleteResult) => {
+      if (deleteResult.result.n === 1) res.json({ status: "OK" });
+      else res.json({ status: "Advertencia: Objeto no encontrado" });
+    })
+    .catch((error) => {
+      console.log(error);
+      res
+        .status(500)
+        .json({ message: `Error internal del servidor: ${error}` });
+    });
+});
+
+/**
+ * Agregar un incidente
+ */
 app.post("/api/issues", (req, res) => {
   const newIssue = req.body;
   console.log("##=> newIssue: %O", newIssue);
