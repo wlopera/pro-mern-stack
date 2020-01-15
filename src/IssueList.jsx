@@ -7,29 +7,38 @@ import { Link } from "react-router-dom";
 
 import PropTypes from "prop-types";
 
-const IssueRow = (props) => (
-  <tr>
-    <td>
-      <Link to={`/issues/${props.issue._id}`}>
-        {props.issue._id.substr(-4)}
-      </Link>
-    </td>
-    <td>{props.issue.status}</td>
-    <td>{props.issue.owner}</td>
-    <td>{props.issue.created.toDateString()}</td>
-    <td>{props.issue.effort}</td>
-    <td>
-      {props.issue.completionDate
-        ? props.issue.completionDate.toDateString()
-        : ""}
-    </td>
-    <td>{props.issue.title}</td>
-  </tr>
-);
+const IssueRow = (props) => {
+  function onDeleteClick() {
+    props.deleteIssue(props.issue._id);
+  }
+
+  return (
+    <tr>
+      <td>
+        <Link to={`/issues/${props.issue._id}`}>
+          {props.issue._id.substr(-4)}
+        </Link>
+      </td>
+      <td>{props.issue.status}</td>
+      <td>{props.issue.owner}</td>
+      <td>{props.issue.created.toDateString()}</td>
+      <td>{props.issue.effort}</td>
+      <td>
+        {props.issue.completionDate
+          ? props.issue.completionDate.toDateString()
+          : ""}
+      </td>
+      <td>{props.issue.title}</td>
+      <td>
+        <button onClick={onDeleteClick}>Delete</button>
+      </td>
+    </tr>
+  );
+};
 
 function IssueTable(props) {
   const issueRows = props.issues.map((issue) => (
-    <IssueRow key={issue._id} issue={issue} />
+    <IssueRow key={issue._id} issue={issue} deleteIssue={props.deleteIssue} />
   ));
 
   return (
@@ -43,6 +52,7 @@ function IssueTable(props) {
           <th>Esfuero</th>
           <th>Fecha de finalización</th>
           <th>Título</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>{issueRows}</tbody>
@@ -54,10 +64,30 @@ export default class IssueList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      issues: []
+      issues: [],
+      status: ""
     };
 
     this.createIssue = this.createIssue.bind(this);
+    this.setFilter = this.setFilter.bind(this);
+    this.deleteIssue = this.deleteIssue.bind(this);
+  }
+
+  deleteIssue(id) {
+    fetch(`/api/issues/${id}`, { method: "DELETE" }).then((response) => {
+      if (!response.ok) alert("Fallo borrando incidente");
+      else this.loadData();
+    });
+  }
+
+  setFilter(query) {
+    console.log("##=> Query-filter: %O", query);
+    this.props.location.search = "";
+    if (query.status) {
+      this.props.location.search = "?status=" + query.status;
+      this.props.location.status = query.status;
+    }
+    this.loadData();
   }
 
   componentDidMount() {
@@ -65,20 +95,17 @@ export default class IssueList extends React.Component {
   }
 
   componentDidUpdate(prepProps) {
-    const oldLocation = prepProps.location;
-    const newLocation = this.props.location;
-
-    console.log("##=> oldLocation: %O", oldLocation);
-    console.log("##=> newLocation: %O", newLocation);
-
-    if (newLocation.key === oldLocation.key) {
-      return;
-    }
-    if (newLocation.query !== undefined) {
-      newLocation.search = "?status=Open";
-    }
-
-    this.loadData();
+    // const oldLocation = prepProps.location;
+    // const newLocation = this.props.location;
+    // console.log("##=> oldLocation: %O", oldLocation);
+    // console.log("##=> newLocation: %O", newLocation);
+    // if (newLocation.key === oldLocation.key) {
+    //   return;
+    // }
+    // if (newLocation.query !== undefined) {
+    //   newLocation.search = "?status=Open";
+    // }
+    // this.loadData();
   }
 
   loadData() {
@@ -94,6 +121,7 @@ export default class IssueList extends React.Component {
                 issue.completionDate = new Date(issue.completionDate);
               }
             });
+
             this.setState({ issues: data.records });
           });
         } else {
@@ -147,12 +175,20 @@ export default class IssueList extends React.Component {
   }
 
   render() {
+    console.log("##=> IssueFilter-this.setFilter: %O", this.setFilter);
+    console.log(
+      "##=> IssueFilter-this.props.location: %O",
+      this.props.location
+    );
     return (
       <div>
         <h1>Explorador de incidentes</h1>
-        <IssueFilter />
+        <IssueFilter
+          setFilter={this.setFilter}
+          initFilter={this.props.location}
+        />
         <hr />
-        <IssueTable issues={this.state.issues} />
+        <IssueTable issues={this.state.issues} deleteIssue={this.deleteIssue} />
         <hr />
         <IssueAdd createIssue={this.createIssue} />
       </div>
@@ -160,6 +196,8 @@ export default class IssueList extends React.Component {
   }
 }
 
-IssueList.propTypes = {
-  location: PropTypes.object.isRequired
-};
+// IssueList.propTypes = {
+//   location: PropTypes.object.isRequired,
+//   setFilter: PropTypes.func.isRequired,
+//   initFilter: PropTypes.object.isRequired
+// };
