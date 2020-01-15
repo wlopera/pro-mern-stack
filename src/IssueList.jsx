@@ -54,10 +54,22 @@ export default class IssueList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      issues: []
+      issues: [],
+      status: ""
     };
 
     this.createIssue = this.createIssue.bind(this);
+    this.setFilter = this.setFilter.bind(this);
+  }
+
+  setFilter(query) {
+    console.log("##=> Query-filter: %O", query);
+    this.props.location.search = "";
+    if (query.status) {
+      this.props.location.search = "?status=" + query.status;
+      this.props.location.status = query.status;
+    }
+    this.loadData();
   }
 
   componentDidMount() {
@@ -65,20 +77,17 @@ export default class IssueList extends React.Component {
   }
 
   componentDidUpdate(prepProps) {
-    const oldLocation = prepProps.location;
-    const newLocation = this.props.location;
-
-    console.log("##=> oldLocation: %O", oldLocation);
-    console.log("##=> newLocation: %O", newLocation);
-
-    if (newLocation.key === oldLocation.key) {
-      return;
-    }
-    if (newLocation.query !== undefined) {
-      newLocation.search = "?status=Open";
-    }
-
-    this.loadData();
+    // const oldLocation = prepProps.location;
+    // const newLocation = this.props.location;
+    // console.log("##=> oldLocation: %O", oldLocation);
+    // console.log("##=> newLocation: %O", newLocation);
+    // if (newLocation.key === oldLocation.key) {
+    //   return;
+    // }
+    // if (newLocation.query !== undefined) {
+    //   newLocation.search = "?status=Open";
+    // }
+    // this.loadData();
   }
 
   loadData() {
@@ -94,6 +103,7 @@ export default class IssueList extends React.Component {
                 issue.completionDate = new Date(issue.completionDate);
               }
             });
+
             this.setState({ issues: data.records });
           });
         } else {
@@ -147,10 +157,18 @@ export default class IssueList extends React.Component {
   }
 
   render() {
+    console.log("##=> IssueFilter-this.setFilter: %O", this.setFilter);
+    console.log(
+      "##=> IssueFilter-this.props.location: %O",
+      this.props.location
+    );
     return (
       <div>
         <h1>Explorador de incidentes</h1>
-        <IssueFilter />
+        <IssueFilter
+          setFilter={this.setFilter}
+          initFilter={this.props.location}
+        />
         <hr />
         <IssueTable issues={this.state.issues} />
         <hr />
@@ -160,6 +178,8 @@ export default class IssueList extends React.Component {
   }
 }
 
-IssueList.propTypes = {
-  location: PropTypes.object.isRequired
-};
+// IssueList.propTypes = {
+//   location: PropTypes.object.isRequired,
+//   setFilter: PropTypes.func.isRequired,
+//   initFilter: PropTypes.object.isRequired
+// };
