@@ -1,5 +1,4 @@
 import React from "react";
-// import { Link } from "react-router-dom";
 
 export default class IssueFilter extends React.Component {
   constructor(props) {
@@ -82,21 +81,6 @@ export default class IssueFilter extends React.Component {
         </div>
       </div>
     );
-
-    // const Separator = () => <span> | </span>;
-    // return (
-    //   <div>
-    //     <Link to="/issues">Todos</Link>
-    //     <Separator />
-    //     <Link to="/issues?status=New">Nuevos</Link>
-    //     <Separator />
-    //     <Link to={{ pathname: "/issues", query: { status: "Open" } }}>
-    //       Abiertos
-    //     </Link>
-    //     <Separator />
-    //     <Link to="/issues?status=Assigned">Asignados</Link>
-    //   </div>
-    // );
   }
 
   onChangeStatus(e) {
@@ -137,16 +121,11 @@ export default class IssueFilter extends React.Component {
   }
 
   clearFilter() {
+    this.setState({
+      status: "",
+      changed: false
+    });
     this.props.setFilter({});
-  }
-
-  componentWillReceiveProps(newProps) {
-    // this.setState({
-    //   status: newProps.initFilter.status || "",
-    //   effort_gte: newProps.initFilter.effort_gte || "",
-    //   effort_lte: newProps.initFilter.effort_lte || "",
-    //   changed: false
-    // });
   }
 
   resetFilter() {
@@ -157,6 +136,5 @@ export default class IssueFilter extends React.Component {
       effort_lte: this.props.initFilter.effort_lte || "",
       changed: false
     });
-    //this.props.setFilter({});
   }
 }
