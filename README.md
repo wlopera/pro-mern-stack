@@ -32,6 +32,14 @@ MONGODB - EXPRESS - REACT . NODEJS
 ### Borrado de un incidente
 ![borrar](https://user-images.githubusercontent.com/7141537/72469433-644f2600-37ad-11ea-8f11-25deeedea3f4.PNG)
 
+## Vista de incidentes - Bootstrap
+
+![incidentes](https://user-images.githubusercontent.com/7141537/72570858-0a715d80-388c-11ea-9393-91afeaa437a7.PNG)
+
+## Vista editor de incidentes - Bootstrap
+
+![Editor](https://user-images.githubusercontent.com/7141537/72570758-c1210e00-388b-11ea-9237-04aafbc9e862.PNG)
+
 ## Base de datos - MongoBD
 
 ![BD-1](https://user-images.githubusercontent.com/7141537/72363941-b3209100-36c3-11ea-8dc6-86a802063a10.PNG)

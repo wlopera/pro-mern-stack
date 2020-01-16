@@ -11,3 +11,9 @@ td {
 table.bordered-table {
     border-collapse: collapse;
 }
+
+.panel-title a {
+    display: block;
+    width: 100%;
+    cursor: pointer;
+}
