@@ -23,33 +23,63 @@ export default class IssueFilter extends React.Component {
     console.log("IssueList-{this.state.status}: %O", this.state);
     return (
       <div>
-        Estado:
-        <select value={this.state.status} onChange={this.onChangeStatus}>
-          <option value="">Todos</option>
-          <option value="New">Nuevos</option>
-          <option value="Open">Abiertos</option>
-          <option value="Assigned">Asignados</option>
-          <option value="Fixed">Resueltos</option>
-          <option value="Verified">Verificados</option>
-          <option value="Closed">Cerrados</option>
-        </select>
-        &nbsp;Esfuerzo entre:
-        <input
-          size={5}
-          value={this.state.effort_gte}
-          onChange={this.onChangeEffortGte}
-        />
-        &nbsp;-&nbsp;
-        <input
-          size={5}
-          value={this.state.effort_lte}
-          onChange={this.onChangeEffortLte}
-        />
-        <button onClick={this.applyFilter}>Apply</button>
-        <button onClick={this.resetFilter} disabled={!this.state.changed}>
-          Reset
-        </button>
-        <button onClick={this.clearFilter}>Clear</button>
+        <div class="panel panel-default">
+          <div class="panel-heading">Filtros</div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="col-md-3">
+                Estado:
+                <select
+                  value={this.state.status}
+                  onChange={this.onChangeStatus}
+                >
+                  <option value="">Todos</option>
+                  <option value="New">Nuevos</option>
+                  <option value="Open">Abiertos</option>
+                  <option value="Assigned">Asignados</option>
+                  <option value="Fixed">Resueltos</option>
+                  <option value="Verified">Verificados</option>
+                  <option value="Closed">Cerrados</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                &nbsp;Esfuerzo entre:
+                <input
+                  size={5}
+                  value={this.state.effort_gte}
+                  onChange={this.onChangeEffortGte}
+                />
+                &nbsp;-&nbsp;
+                <input
+                  size={5}
+                  value={this.state.effort_lte}
+                  onChange={this.onChangeEffortLte}
+                />
+              </div>
+              <div class="col-md-6">
+                <div class="col-md-2">
+                  <button onClick={this.applyFilter} class="btn btn-success">
+                    Aplicar
+                  </button>
+                </div>
+                <div class="col-md-2">
+                  <button
+                    onClick={this.resetFilter}
+                    disabled={!this.state.changed}
+                    class="btn btn-success"
+                  >
+                    Cancelar
+                  </button>
+                </div>
+                <div class="col-md-2">
+                  <button onClick={this.clearFilter} class="btn btn-success">
+                    Limpiar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
 

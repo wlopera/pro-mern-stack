@@ -1,13 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import {
-  BrowserRouter,
-  Switch,
-  Route,
-  Redirect,
-  withRouter
-} from "react-router-dom";
+import { Navbar, Nav, Button } from "react-bootstrap";
+
+import { BrowserRouter, Switch, Route, withRouter } from "react-router-dom";
 
 import IssueList from "./IssueList.jsx";
 import IssueEdit from "./IssueEdit.jsx";
@@ -18,33 +14,48 @@ const noMatch = () => {
   return <p>Página no encontrada</p>;
 };
 
-function App() {
+function Header() {
   return (
-    <BrowserRouter>
-      <React.Fragment>
-        <Switch>
-          <Route exact path="/" component={IssueList} />
-          <Route exact path="/issues" component={withRouter(IssueList)} />
-          <Route path="/issues/:id" component={IssueEdit} />
-          <Route path="*" component={noMatch} />
-        </Switch>
-      </React.Fragment>
-    </BrowserRouter>
+    <Navbar bg="success" variant="light">
+      <Navbar.Brand>Explorador de Incidentes</Navbar.Brand>
+      <Navbar.Brand href="/issues">Incidentes</Navbar.Brand>
+      <Navbar.Brand href="/reports">Reportes</Navbar.Brand>
+      <Nav className="navbar-right">
+        <Navbar.Brand
+          href="/agregar"
+          className="glyphicon glyphicon-plus"
+          variant="dark"
+        >
+          Crear-Incidente
+        </Navbar.Brand>
+
+        <Navbar.Text>
+          <Button size="sm" variant="btn btn-info">
+            Salir
+          </Button>
+        </Navbar.Text>
+      </Nav>
+    </Navbar>
   );
 }
 
-// const RouteApp = () => (
-//   <BrowserRouter>
-//     <React.Fragment>
-//       <Switch>
-//         <Route exact path="/" component={IssueList} />
-//         <Route path="/issues" component={IssueList} />
-//         <Route path="/edit" component={IssueEdit} />
-//         <Route path="*" component={noMatch} />
-//       </Switch>
-//     </React.Fragment>
-//   </BrowserRouter>
-// );
+function App() {
+  return (
+    <div>
+      <Header />
+      <BrowserRouter>
+        <div className="container-fluid">
+          <Switch>
+            <Route exact path="/" component={IssueList} />
+            <Route exact path="/issues" component={withRouter(IssueList)} />
+            <Route path="/issues/:id" component={IssueEdit} />
+            <Route path="*" component={noMatch} />
+          </Switch>
+        </div>
+      </BrowserRouter>
+    </div>
+  );
+}
 
 ReactDOM.render(<App />, contentNode);
 

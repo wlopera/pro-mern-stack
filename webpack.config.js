@@ -1,8 +1,16 @@
 module.exports = {
   entry: {
     app: ["./src/App.jsx"],
-    vendor: ["react", "react-dom", "whatwg-fetch", "react-router-dom"]
+    vendor: [
+      "react",
+      "react-dom",
+      "whatwg-fetch",
+      "react-router-dom",
+      "react-bootstrap",
+      "react-router-bootstrap"
+    ]
   },
+
   output: {
     path: __dirname + "/static",
     filename: "app.bundle.js"
