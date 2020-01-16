@@ -38,10 +38,8 @@ MONGODB - EXPRESS - REACT . NODEJS
 
 ## Uso de Bootstrap - [En construcción]
 
-![BD-1](https://user-images.githubusercontent.com/7141537/72363941-b3209100-36c3-11ea-8dc6-86a802063a10.PNG)
+![bootstrap](https://user-images.githubusercontent.com/7141537/72559908-e30e9680-3873-11ea-81cc-1135ed5ac8b5.PNG)
 
 ### En construcción 
-
-![bootstrap](https://user-images.githubusercontent.com/7141537/72559908-e30e9680-3873-11ea-81cc-1135ed5ac8b5.PNG)
 
 ![data](https://user-images.githubusercontent.com/7141537/48297627-294fb500-e47b-11e8-9d9c-4b184aefd012.png)
