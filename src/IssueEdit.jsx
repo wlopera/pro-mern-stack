@@ -2,6 +2,8 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 
+import { Form, FormControl, Button } from "react-bootstrap";
+
 export default class IssueEdit extends React.Component {
   constructor(props) {
     super(props);
@@ -24,17 +26,8 @@ export default class IssueEdit extends React.Component {
     this.loadData();
   }
 
-  componentDidUpdate(prepProp) {
-    // if (prepProp.match.params.id !== this.props.id) {
-    //   this.loadData();
-    // }
-  }
-
   onSubmit(event) {
     event.preventDefault();
-    // if (Object.keys(this.state.invalidFields).length !== 0) {
-    //   return;
-    // }
     fetch(`/api/issues/${this.props.match.params.id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -103,53 +96,105 @@ export default class IssueEdit extends React.Component {
 
   render() {
     const issue = this.state.issue;
+
+    const divStyle = {
+      padding: "6px"
+    };
+
     console.log("##=> IssueEdit-render-issue: %O", issue);
     return (
-      <div>
-        <form onSubmit={this.onSubmit}>
-          ID: {issue._id}
-          <br />
-          Creado: {issue.created}
-          <br />
-          Estado:
-          <select name="status" value={issue.status} onChange={this.onChange}>
-            <option value="New">Nuevos</option>
-            <option value="Open">Abierto</option>
-            <option value="Assigned">Asignado</option>
-            <option value="Fixed">Resuelto</option>
-            <option value="Verified">Verificado</option>}
-            <option value="Closed">Cerrado</option>
-          </select>
-          <br />
-          Propietario:
-          <input name="owner" value={issue.owner} onChange={this.onChange} />
-          <br />
-          Esfuerzo:
-          <input
-            size={5}
-            name="effort"
-            value={issue.effort}
-            onChange={this.onChange}
-          />
-          <br />
-          Fecha de completado:
-          <input
-            name="completionDate"
-            value={issue.completionDate}
-            onChange={this.onChange}
-          />
-          <br />
-          Título:
-          <input
-            name="title"
-            size={50}
-            value={issue.title}
-            onChange={this.onChange}
-          />
-          <br />
-          <button type="submit">Submit</button>
-          <Link to="/issues"> Regresar a lista de incidentes</Link>
-        </form>
+      <div class="panel panel-default" style={{ width: "60%" }}>
+        <div class="panel-heading">Editar Incidentes</div>
+        <Form inline onSubmit={this.onSubmit}>
+          <div class="row">
+            <div class="row" style={divStyle}>
+              <div class="col-md-2" align="right">
+                <strong>ID</strong>
+              </div>
+              <div class="col-md-3">{issue._id}</div>
+            </div>
+            <div class="row" style={divStyle}>
+              <div class="col-md-2" align="right">
+                <strong>Creado</strong>
+              </div>
+              <div class="col-md-3">{issue.created}</div>
+            </div>
+            <div class="row" style={divStyle}>
+              <div class="col-md-2" align="right">
+                <strong>Estado</strong>
+              </div>
+              <div class="col-md-3">
+                <select
+                  name="status"
+                  value={issue.status}
+                  onChange={this.onChange}
+                >
+                  <option value="New">Nuevos</option>
+                  <option value="Open">Abierto</option>
+                  <option value="Assigned">Asignado</option>
+                  <option value="Fixed">Resuelto</option>
+                  <option value="Verified">Verificado</option>}
+                  <option value="Closed">Cerrado</option>
+                </select>
+              </div>
+            </div>
+            <div class="row" style={divStyle}>
+              <div class="col-md-2" align="right">
+                <strong>Propietario</strong>
+              </div>
+              <div class="col-md-3">
+                <input
+                  name="owner"
+                  value={issue.owner}
+                  onChange={this.onChange}
+                />
+              </div>
+            </div>
+            <div class="row" style={divStyle}>
+              <div class="col-md-2" align="right">
+                <strong>Esfuerzo</strong>
+              </div>
+              <div class="col-md-3">
+                <input
+                  size={5}
+                  name="effort"
+                  value={issue.effort}
+                  onChange={this.onChange}
+                />
+              </div>
+            </div>
+            <div class="row" style={divStyle}>
+              <div class="col-md-2" align="right">
+                <strong>Fecha de completado</strong>
+              </div>
+              <div class="col-md-3">
+                <span>{issue.completionDate}</span>
+              </div>
+            </div>
+            <div class="row" style={divStyle}>
+              <div class="col-md-2" align="right">
+                <strong>Título</strong>
+              </div>
+              <div class="col-md-3">
+                <input
+                  name="title"
+                  size={50}
+                  value={issue.title}
+                  onChange={this.onChange}
+                />
+              </div>
+            </div>
+            <div class="row" style={divStyle}>
+              <div class="col-md-2" align="right"></div>
+              <div class="col-md-3">
+                <button type="submit" class="btn btn-primary">
+                  Modificar
+                </button>
+                <Link to="/issues"> Regresar</Link>
+              </div>
+            </div>
+          </div>
+        </Form>
       </div>
     );
   }

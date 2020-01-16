@@ -5,7 +5,7 @@ import IssueFilter from "./IssueFilter.jsx";
 
 import { Link } from "react-router-dom";
 
-import PropTypes from "prop-types";
+import { Button, Table } from "react-bootstrap";
 
 const IssueRow = (props) => {
   function onDeleteClick() {
@@ -30,7 +30,12 @@ const IssueRow = (props) => {
       </td>
       <td>{props.issue.title}</td>
       <td>
-        <button onClick={onDeleteClick}>Delete</button>
+        <Button
+          size="sm"
+          onClick={onDeleteClick}
+          className="glyphicon glyphicon-trash"
+          variant="primary"
+        ></Button>
       </td>
     </tr>
   );
@@ -42,7 +47,7 @@ function IssueTable(props) {
   ));
 
   return (
-    <table className="bordered-table">
+    <Table className="bordered condensed hover responsive">
       <thead>
         <tr>
           <th>Id</th>
@@ -56,7 +61,7 @@ function IssueTable(props) {
         </tr>
       </thead>
       <tbody>{issueRows}</tbody>
-    </table>
+    </Table>
   );
 }
 
@@ -182,7 +187,6 @@ export default class IssueList extends React.Component {
     );
     return (
       <div>
-        <h1>Explorador de incidentes</h1>
         <IssueFilter
           setFilter={this.setFilter}
           initFilter={this.props.location}
